@@ -9,20 +9,20 @@ logging.basicConfig(
 )
 
 
-def write_bed(bed_df, output_file_name, compressed):
-    if compressed:
+def write_bed(bed_df, output_file_name, uncompressed):
+    if uncompressed:
         bed_df.to_csv(
-            f"{output_file_name}.bed.gz",
+            f"{output_file_name}.bed",
             sep="\t",
-            compression="gzip",
             header=False,
             index=False,
             chunksize=1024,
         )
     else:
         bed_df.to_csv(
-            f"{output_file_name}.bed",
+            f"{output_file_name}.bed.gz",
             sep="\t",
+            compression="gzip",
             header=False,
             index=False,
             chunksize=1024,
@@ -48,13 +48,8 @@ def write_bed(bed_df, output_file_name, compressed):
     help="A comma-separated list of feature names to extract.",
     type=click.STRING,
 )
-@click.option(
-    "--compressed",
-    default=True,
-    help="Whether to output a compressed BED file.",
-    type=click.BOOL,
-)
-def gtf2bed(gtf, output, feature, compressed):
+@click.option("--uncompressed", help="Don't compress output file", is_flag=True)
+def gtf2bed(gtf, output, feature, uncompressed):
     """Simple command to convert GTF features to a BED file"""
 
     # TODO: Support the following features:
@@ -90,9 +85,13 @@ def gtf2bed(gtf, output, feature, compressed):
         logging.error(message)
         raise Exception
 
-    bed_data = feature_gtf[
-        ["seqname", "start", "end", "gene_id", "score", "strand"]
-    ].fillna(".")
+    for current_feat, group in feature_gtf.groupby("feature"):
 
-    logging.info(f"Writing {output}...")
-    write_bed(bed_data, output, compressed)
+        bed_data = group[
+            ["seqname", "start", "end", "gene_id", "score", "strand"]
+        ].fillna(".")
+
+        current_filename = f"{output}_{current_feat}"
+
+        logging.info(f"Writing {current_filename}...")
+        write_bed(bed_data, current_filename, uncompressed)
