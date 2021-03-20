@@ -9,6 +9,26 @@ logging.basicConfig(
 )
 
 
+def write_bed(bed_df, output_file_name, compressed):
+    if compressed:
+        bed_df.to_csv(
+            f"{output_file_name}.bed.gz",
+            sep="\t",
+            compression="gzip",
+            header=False,
+            index=False,
+            chunksize=1024,
+        )
+    else:
+        bed_df.to_csv(
+            f"{output_file_name}.bed",
+            sep="\t",
+            header=False,
+            index=False,
+            chunksize=1024,
+        )
+
+
 @click.command()
 @click.option(
     "--gtf",
@@ -75,20 +95,4 @@ def gtf2bed(gtf, output, feature, compressed):
     ].fillna(".")
 
     logging.info(f"Writing {output}...")
-    if compressed:
-        bed_data.to_csv(
-            f"{output}.bed.gz",
-            sep="\t",
-            compression="gzip",
-            header=False,
-            index=False,
-            chunksize=1024,
-        )
-    else:
-        bed_data.to_csv(
-            f"{output}.bed",
-            sep="\t",
-            header=False,
-            index=False,
-            chunksize=1024,
-        )
+    write_bed(bed_data, output, compressed)
