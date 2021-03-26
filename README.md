@@ -25,3 +25,13 @@ This will create two feature bed files, `Marmota_result_exon.bed.gz` and `Marmot
 for the corresponding features.
 
 The command will require more RAM depending on the size of the input GTF file.
+
+* Basic features that can be extracted:
+  * `exon`
+  * `intron`
+  * `start_codon`
+  * `stop_codon`
+  * `CDS`
+  * `three_prime_utr`
+  * `five_prime_utr`
+  * `ncRNA`
