@@ -9,10 +9,10 @@ Keep in mind this is a simple prototype, use it at your own risk.
 - [Download the example data](https://github.com/jvfe/gtf2bed/raw/main/data/Marmota_example.gtf.gz), a subset of
   the [Ensembl](https://www.ensembl.org/) Marmota marmota GTF file.
 
-- Download package
+- Clone the repository, and once inside it, download package
 
 ```bash
-pip install gtf2bed
+pip install .
 ```
 
 - Run the package on the example data
